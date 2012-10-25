@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListBoxSandBox", "WpfApplication4\ListBoxSandBox.csproj", "{C8C29886-9FB9-4D7A-BACF-F0D4B4E69B0C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListBoxSandBox", "ListBoxSandBox\ListBoxSandBox.csproj", "{C8C29886-9FB9-4D7A-BACF-F0D4B4E69B0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
