@@ -12,7 +12,6 @@ namespace ListBoxSandBox
     public partial class MainWindow : Window
     {
         private object _draggedData;
-        private int? _draggedItemIndex;
         private Point? _initialPosition;
 
         public MainWindow()
@@ -20,37 +19,17 @@ namespace ListBoxSandBox
             InitializeComponent();
         }
 
-        private static object GetDraggedData(ItemsControl itemsControl, DependencyObject visual)
-        {
-            if (itemsControl == null || visual == null)
-            {
-                return null;
-            }
-            var data = itemsControl.ContainerFromElement(visual) as FrameworkElement;
-            return data == null ? null : data.DataContext;
-        }
-
-        private static int? GetItemIndex(ItemsControl host, DependencyObject item)
-        {
-            if (host.Items.Contains(item))
-            {
-                return host.Items.IndexOf(item);
-            }
-            return null;
-        }
-
         private void CleanUpData()
         {
             _initialPosition = null;
             _draggedData = null;
-            _draggedItemIndex = null;
         }
 
         private void ListBox_PreviewDrop(object sender, DragEventArgs e)
         {
             var itemsControl = sender as ItemsControl;
             var originalSource = e.OriginalSource as DependencyObject;
-            var droppedItemIndex = GetItemIndex(itemsControl, originalSource);
+            var droppedItemIndex = itemsControl.GetItemIndex(originalSource);
 
             if (itemsControl == null)
             {
@@ -71,8 +50,8 @@ namespace ListBoxSandBox
         private void ListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _initialPosition = e.GetPosition(this);
-            _draggedData = GetDraggedData(sender as ItemsControl, e.OriginalSource as DependencyObject);
-            _draggedItemIndex = GetItemIndex(sender as ItemsControl, e.OriginalSource as DependencyObject);
+            _draggedData = (sender as ItemsControl).GetDraggedData(e.OriginalSource as DependencyObject);
+            (sender as ItemsControl).GetItemIndex(e.OriginalSource as DependencyObject);
         }
 
         private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -93,7 +72,6 @@ namespace ListBoxSandBox
                 }
 
                 DragDrop.DoDragDrop(senderObj, _draggedData, DragDropEffects.Move);
-                Debug.WriteLine("Drag end");
                 CleanUpData();
             }
         }
