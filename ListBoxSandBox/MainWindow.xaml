@@ -1,7 +1,7 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" mc:Ignorable="d" x:Class="WpfApplication4.MainWindow"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" mc:Ignorable="d" x:Class="ListBoxSandBox.MainWindow"
         Title="MainWindow" Height="679.851" Width="869.776">
     <Window.Resources>
         <ItemsPanelTemplate x:Key="ItemsWrapPanelTemplate">
@@ -13,7 +13,7 @@
         </ItemsPanelTemplate>
     </Window.Resources>
     <Grid>
-        <ListBox Margin="0,0,0,18" ItemsPanel="{DynamicResource ItemsWrapPanelTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox Margin="0,0,0,18" ItemsPanel="{DynamicResource ItemsWrapPanelTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown" PreviewMouseMove="ListBox_PreviewMouseMove" PreviewMouseUp="ListBox_PreviewMouseUp" PreviewDrop="ListBox_PreviewDrop" AllowDrop="True">
             <Image Height="{Binding Value, ElementName=slider}" Source="Win8.png" Width="{Binding Value, ElementName=slider}"/>
             <Image Height="{Binding Value, ElementName=slider}" Source="Win7.png" Width="{Binding Value, ElementName=slider}"/>
             <Image Height="{Binding Value, ElementName=slider}" Source="WinVista.png" Width="{Binding Value, ElementName=slider}"/>
