@@ -13,6 +13,8 @@ namespace ListBoxSandBox
         private Point? _initialPosition;
         private InsertionAdorner _insertionAdorner;
         private FrameworkElement _draggedContainer;
+        private int? _draggedItemIndex;
+        private FrameworkElement _draggedOveredContainer;
 
         public MainWindow()
         {
@@ -23,9 +25,9 @@ namespace ListBoxSandBox
         {
             _initialPosition = null;
             _draggedData = null;
-            if (_draggedContainer != null && _insertionAdorner != null)
+            if (_draggedOveredContainer != null && _insertionAdorner != null)
             {
-                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedContainer);
+                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
 
                 if (adornerLayer != null)
                 {
@@ -34,7 +36,9 @@ namespace ListBoxSandBox
             }
 
             _insertionAdorner = null;
+            _draggedItemIndex = null;
             _draggedContainer = null;
+            _draggedOveredContainer = null;
 
         }
 
@@ -52,6 +56,10 @@ namespace ListBoxSandBox
             itemsControl.Items.Remove(_draggedData);
             if (droppedItemIndex != null)
             {
+                if(droppedItemIndex > _draggedItemIndex)
+                {
+                    droppedItemIndex--;
+                }
                 itemsControl.Items.Insert((int) droppedItemIndex, _draggedData);
             }
             else
@@ -64,6 +72,8 @@ namespace ListBoxSandBox
         {
             _initialPosition = e.GetPosition(this);
             _draggedData = (sender as ItemsControl).GetDraggedData(e.OriginalSource as DependencyObject);
+            _draggedContainer = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
+            _draggedItemIndex = (sender as ItemsControl).GetItemIndex(e.OriginalSource as DependencyObject);
         }
 
         private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -82,7 +92,6 @@ namespace ListBoxSandBox
                 {
                     return;
                 }
-
                 DragDrop.DoDragDrop(senderObj, _draggedData, DragDropEffects.Move);
                 CleanUpData();
             }
@@ -95,23 +104,28 @@ namespace ListBoxSandBox
 
         private void ListBox_PreviewDragEnter(object sender, DragEventArgs e)
         {
-            _draggedContainer = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
-            var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedContainer);
-            if (_draggedContainer != null)
+            _draggedOveredContainer = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
+            if (_draggedOveredContainer != null)
             {
-                _insertionAdorner = new InsertionAdorner(_draggedContainer);
-                adornerLayer.Add(_insertionAdorner);
+                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
+                if (_draggedContainer != null)
+                {
+                    _insertionAdorner = new InsertionAdorner(_draggedOveredContainer);
+                    adornerLayer.Add(_insertionAdorner);
+                }
             }
-
         }
 
         private void ListBox_PreviewDragLeave(object sender, DragEventArgs e)
         {
-            var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedContainer);
-            if (_insertionAdorner != null)
+            if (_draggedOveredContainer != null)
             {
-                adornerLayer.Remove(_insertionAdorner);
-                _insertionAdorner = null;
+                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
+                if (_insertionAdorner != null)
+                {
+                    adornerLayer.Remove(_insertionAdorner);
+                    _insertionAdorner = null;
+                }
             }
         }
 
