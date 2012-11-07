@@ -104,15 +104,18 @@ namespace ListBoxSandBox
 
         private void ListBox_PreviewDragEnter(object sender, DragEventArgs e)
         {
-            _draggedOveredContainer = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
-            if (_draggedOveredContainer != null)
+            var itemsControl = sender as ItemsControl;
+            if (itemsControl != null)
             {
-                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
-                if (_draggedContainer != null)
-                {
-                    _insertionAdorner = new InsertionAdorner(_draggedOveredContainer);
-                    adornerLayer.Add(_insertionAdorner);
-                }
+                _draggedOveredContainer = itemsControl.GetDraggedContainer(e.OriginalSource as DependencyObject) ??
+                                          itemsControl.ItemContainerGenerator.ContainerFromIndex
+                                              (itemsControl.Items.Count - 1) as FrameworkElement;
+            }
+            var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
+            if (_draggedContainer != null)
+            {
+                _insertionAdorner = new InsertionAdorner(_draggedOveredContainer);
+                adornerLayer.Add(_insertionAdorner);
             }
         }
 
