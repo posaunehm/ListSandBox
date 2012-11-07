@@ -19,28 +19,28 @@ namespace ListBoxSandBox
         public InsertionAdorner(UIElement adornedElement)
             : base(adornedElement)
         {
-
-
             _adornedElement = adornedElement;
 
             _host = new Grid();
             _insertionCursor = new InsertionCursor();
 
             _host.Children.Add(_insertionCursor);
+
+            _insertionCursor.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            _insertionCursor.SetValue(VerticalAlignmentProperty,VerticalAlignment.Stretch);
         }
 
         /// <summary>
         /// Override of VisualChildrenCount.
         /// Always return 0
         /// </summary>
-        protected override int VisualChildrenCount { get { return 1; } }
+        protected override int VisualChildrenCount
+        {
+            get { return 1; }
+        }
 
-        /// <summary>
-        /// Override of ArrangeOverride.
-        /// Set host grid's size.
-        /// </summary>
-        /// <param name="finalSize"></param>
-        /// <returns></returns>
+        //Override of ArrangeOverride.
+        //Set host grid's size.
         protected override Size ArrangeOverride(Size finalSize)
         {
             _host.Arrange(new Rect(finalSize));

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace ListBoxSandBox
@@ -10,6 +11,8 @@ namespace ListBoxSandBox
     {
         private object _draggedData;
         private Point? _initialPosition;
+        private InsertionAdorner _insertionAdorner;
+        private FrameworkElement _draggedContainer;
 
         public MainWindow()
         {
@@ -20,6 +23,19 @@ namespace ListBoxSandBox
         {
             _initialPosition = null;
             _draggedData = null;
+            if (_draggedContainer != null && _insertionAdorner != null)
+            {
+                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedContainer);
+
+                if (adornerLayer != null)
+                {
+                    adornerLayer.Remove(_insertionAdorner);
+                }
+            }
+
+            _insertionAdorner = null;
+            _draggedContainer = null;
+
         }
 
         private void ListBox_PreviewDrop(object sender, DragEventArgs e)
@@ -79,14 +95,24 @@ namespace ListBoxSandBox
 
         private void ListBox_PreviewDragEnter(object sender, DragEventArgs e)
         {
-            var container = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
-            Debug.WriteLine("Enter: " + container);
+            _draggedContainer = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
+            var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedContainer);
+            if (_draggedContainer != null)
+            {
+                _insertionAdorner = new InsertionAdorner(_draggedContainer);
+                adornerLayer.Add(_insertionAdorner);
+            }
+
         }
 
         private void ListBox_PreviewDragLeave(object sender, DragEventArgs e)
         {
-            var container = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
-            Debug.WriteLine("Leave: " + container);
+            var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedContainer);
+            if (_insertionAdorner != null)
+            {
+                adornerLayer.Remove(_insertionAdorner);
+                _insertionAdorner = null;
+            }
         }
 
         private void ListBox_PreviewDragOver(object sender, DragEventArgs e)
