@@ -7,11 +7,7 @@ namespace ListBoxSandBox
     {
         public static object GetDraggedData(this ItemsControl itemsControl, DependencyObject visual)
         {
-            if (itemsControl == null || visual == null)
-            {
-                return null;
-            }
-            var data = itemsControl.ContainerFromElement(visual) as FrameworkElement;
+            var data = itemsControl.GetDraggedContainer(visual);
             return data == null ? null : data.DataContext;
         }
 
@@ -23,5 +19,15 @@ namespace ListBoxSandBox
             }
             return null;
         }
+
+        public static FrameworkElement GetDraggedContainer(this ItemsControl itemsControl, DependencyObject visual)
+        {
+            if (itemsControl == null || visual == null)
+            {
+                return null;
+            }
+            return itemsControl.ContainerFromElement(visual) as FrameworkElement;
+        }
+
     }
 }
