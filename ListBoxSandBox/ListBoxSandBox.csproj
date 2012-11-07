@@ -71,6 +71,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ExtentionMethods.cs" />
+    <Compile Include="InsertionAdorner.cs" />
     <Compile Include="InsertionCursor.xaml.cs">
       <DependentUpon>InsertionCursor.xaml</DependentUpon>
     </Compile>

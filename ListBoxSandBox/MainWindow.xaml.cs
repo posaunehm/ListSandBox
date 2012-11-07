@@ -6,9 +6,6 @@ using System.Windows.Input;
 
 namespace ListBoxSandBox
 {
-    /// <summary>
-    ///   MainWindow.xaml の相互作用ロジック
-    /// </summary>
     public partial class MainWindow : Window
     {
         private object _draggedData;
