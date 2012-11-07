@@ -51,7 +51,6 @@ namespace ListBoxSandBox
         {
             _initialPosition = e.GetPosition(this);
             _draggedData = (sender as ItemsControl).GetDraggedData(e.OriginalSource as DependencyObject);
-            (sender as ItemsControl).GetItemIndex(e.OriginalSource as DependencyObject);
         }
 
         private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -79,6 +78,23 @@ namespace ListBoxSandBox
         private void ListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             CleanUpData();
+        }
+
+        private void ListBox_PreviewDragEnter(object sender, DragEventArgs e)
+        {
+            var container = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
+            Debug.WriteLine("Enter: " + container);
+        }
+
+        private void ListBox_PreviewDragLeave(object sender, DragEventArgs e)
+        {
+            var container = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
+            Debug.WriteLine("Leave: " + container);
+        }
+
+        private void ListBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            
         }
     }
 }

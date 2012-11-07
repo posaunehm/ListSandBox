@@ -13,7 +13,7 @@
         </ItemsPanelTemplate>
     </Window.Resources>
     <Grid>
-        <ListBox Margin="0,0,0,18" ItemsPanel="{DynamicResource ItemsWrapPanelTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown" PreviewMouseMove="ListBox_PreviewMouseMove" PreviewMouseUp="ListBox_PreviewMouseUp" PreviewDrop="ListBox_PreviewDrop" AllowDrop="True">
+        <ListBox Margin="0,0,0,18" ItemsPanel="{DynamicResource ItemsWrapPanelTemplate}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown" PreviewMouseMove="ListBox_PreviewMouseMove" PreviewMouseUp="ListBox_PreviewMouseUp" PreviewDrop="ListBox_PreviewDrop" AllowDrop="True" PreviewDragEnter="ListBox_PreviewDragEnter" PreviewDragLeave="ListBox_PreviewDragLeave" PreviewDragOver="ListBox_PreviewDragOver">
             <Image Height="{Binding Value, ElementName=slider}" Source="Win8.png" Width="{Binding Value, ElementName=slider}"/>
             <Image Height="{Binding Value, ElementName=slider}" Source="Win7.png" Width="{Binding Value, ElementName=slider}"/>
             <Image Height="{Binding Value, ElementName=slider}" Source="WinVista.png" Width="{Binding Value, ElementName=slider}"/>
