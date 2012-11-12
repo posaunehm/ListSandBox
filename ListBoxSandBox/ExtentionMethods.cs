@@ -5,9 +5,9 @@ namespace ListBoxSandBox
 {
     public static class ExtentionMethods
     {
-        public static object GetDraggedData(this ItemsControl itemsControl, DependencyObject visual)
+        public static object GetItemData(this ItemsControl itemsControl, DependencyObject item)
         {
-            var data = itemsControl.GetDraggedContainer(visual);
+            var data = itemsControl.GetItemContainer(item);
             return data == null ? null : data.DataContext;
         }
 
@@ -20,13 +20,13 @@ namespace ListBoxSandBox
             return null;
         }
 
-        public static FrameworkElement GetDraggedContainer(this ItemsControl itemsControl, DependencyObject visual)
+        public static FrameworkElement GetItemContainer(this ItemsControl itemsControl, DependencyObject item)
         {
-            if (itemsControl == null || visual == null)
+            if (itemsControl == null || item == null)
             {
                 return null;
             }
-            return itemsControl.ContainerFromElement(visual) as FrameworkElement;
+            return itemsControl.ContainerFromElement(item) as FrameworkElement;
         }
 
     }
