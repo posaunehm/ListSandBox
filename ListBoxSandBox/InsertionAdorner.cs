@@ -16,7 +16,7 @@ namespace ListBoxSandBox
         private readonly Grid _host;
         private readonly InsertionCursor _insertionCursor;
 
-        public InsertionAdorner(UIElement adornedElement)
+        public InsertionAdorner(UIElement adornedElement, bool showInRightSide = false)
             : base(adornedElement)
         {
             _adornedElement = adornedElement;
@@ -26,7 +26,8 @@ namespace ListBoxSandBox
 
             _host.Children.Add(_insertionCursor);
 
-            _insertionCursor.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            _insertionCursor.SetValue(HorizontalAlignmentProperty,
+                showInRightSide? HorizontalAlignment.Right : HorizontalAlignment.Left);
             _insertionCursor.SetValue(VerticalAlignmentProperty,VerticalAlignment.Stretch);
         }
 
