@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -9,16 +8,22 @@ namespace ListBoxSandBox
 {
     public partial class MainWindow : Window
     {
-        private object _draggedData;
-        private Point? _initialPosition;
-        private InsertionAdorner _insertionAdorner;
         private FrameworkElement _draggedContainer;
+        private object _draggedData;
         private int? _draggedItemIndex;
         private FrameworkElement _draggedOveredContainer;
+        private Point? _initialPosition;
+        private InsertionAdorner _insertionAdorner;
 
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private static bool MovedEnoughForDrag(Vector delta)
+        {
+            return Math.Abs(delta.X) > SystemParameters.MinimumHorizontalDragDistance
+                   && Math.Abs(delta.Y) > SystemParameters.MinimumVerticalDragDistance;
         }
 
         private void CleanUpData()
@@ -29,38 +34,38 @@ namespace ListBoxSandBox
             {
                 var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
 
-                if (adornerLayer != null)
-                {
-                    adornerLayer.Remove(_insertionAdorner);
-                }
+                if (adornerLayer != null) { adornerLayer.Remove(_insertionAdorner); }
             }
 
             _insertionAdorner = null;
             _draggedItemIndex = null;
             _draggedContainer = null;
             _draggedOveredContainer = null;
-
         }
 
-        private void ListBox_PreviewDrop(object sender, DragEventArgs e)
+        private void CreateInsertionAdorner(DependencyObject draggedItem, ItemsControl itemsControl)
         {
-            var itemsControl = sender as ItemsControl;
-            var originalSource = e.OriginalSource as DependencyObject;
-            var droppedItemIndex = itemsControl.GetItemIndex(originalSource);
-
-            if (itemsControl == null)
+            _draggedOveredContainer = itemsControl.GetItemContainer(draggedItem);
+            bool showInRight = false;
+            if (_draggedOveredContainer == null)
             {
-                return;
+                _draggedOveredContainer = itemsControl.GetLastContainer();
+                showInRight = true;
             }
 
+            _insertionAdorner = new InsertionAdorner(_draggedOveredContainer, showInRight);
+        }
+
+        private void DropItemAt(int? droppedItemIndex, ItemsControl itemsControl)
+        {
             itemsControl.Items.Remove(_draggedData);
             if (droppedItemIndex != null)
             {
-                if(droppedItemIndex > _draggedItemIndex)
+                if (droppedItemIndex > _draggedItemIndex)
                 {
                     droppedItemIndex--;
                 }
-                itemsControl.Items.Insert((int) droppedItemIndex, _draggedData);
+                itemsControl.Items.Insert((int)droppedItemIndex, _draggedData);
             }
             else
             {
@@ -68,64 +73,13 @@ namespace ListBoxSandBox
             }
         }
 
-        private void ListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            _initialPosition = e.GetPosition(this);
-            _draggedData = (sender as ItemsControl).GetItemData(e.OriginalSource as DependencyObject);
-            _draggedContainer = (sender as ItemsControl).GetItemContainer(e.OriginalSource as DependencyObject);
-            _draggedItemIndex = (sender as ItemsControl).GetItemIndex(e.OriginalSource as DependencyObject);
-        }
-
-        private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (_initialPosition == null)
-            {
-                return;
-            }
-            var delta = (_initialPosition - e.GetPosition(this)).Value;
-
-            if (Math.Abs(delta.X) > SystemParameters.MinimumHorizontalDragDistance
-                && Math.Abs(delta.Y) > SystemParameters.MinimumVerticalDragDistance)
-            {
-                var senderObj = sender as DependencyObject;
-                if (senderObj == null)
-                {
-                    return;
-                }
-                DragDrop.DoDragDrop(senderObj, _draggedData, DragDropEffects.Move);
-                CleanUpData();
-            }
-        }
-
-        private void ListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-        {
-            CleanUpData();
-        }
-
         private void ListBox_PreviewDragEnter(object sender, DragEventArgs e)
         {
             var itemsControl = sender as ItemsControl;
-            bool showInRight = false;
-            if (itemsControl != null)
-            {
-                var temp = itemsControl.GetItemContainer(e.OriginalSource as DependencyObject);
-                if(temp == null)
-                {
-                    _draggedOveredContainer = itemsControl.ItemContainerGenerator.ContainerFromIndex
-                                              (itemsControl.Items.Count - 1) as FrameworkElement;
-                    showInRight = true;
-                }
-                else
-                {
-                    _draggedOveredContainer = temp;
-                }
-            }
-            var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
-            if (_draggedContainer != null)
-            {
-                _insertionAdorner = new InsertionAdorner(_draggedOveredContainer,showInRight);
-                adornerLayer.Add(_insertionAdorner);
-            }
+            if (itemsControl == null) { return; }
+
+            CreateInsertionAdorner(e.OriginalSource as DependencyObject, itemsControl);
+            AdornerLayer.GetAdornerLayer(_draggedOveredContainer).Add(_insertionAdorner);
         }
 
         private void ListBox_PreviewDragLeave(object sender, DragEventArgs e)
@@ -143,7 +97,40 @@ namespace ListBoxSandBox
 
         private void ListBox_PreviewDragOver(object sender, DragEventArgs e)
         {
-            
+        }
+
+        private void ListBox_PreviewDrop(object sender, DragEventArgs e)
+        {
+            var itemsControl = sender as ItemsControl;
+            if (itemsControl == null) { return; }
+
+            DropItemAt(itemsControl.GetItemIndex(e.OriginalSource as DependencyObject), itemsControl);
+        }
+
+        private void ListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _initialPosition = e.GetPosition(this);
+            _draggedData = (sender as ItemsControl).GetItemData(e.OriginalSource as DependencyObject);
+            _draggedContainer = (sender as ItemsControl).GetItemContainer(e.OriginalSource as DependencyObject);
+            _draggedItemIndex = (sender as ItemsControl).GetItemIndex(e.OriginalSource as DependencyObject);
+        }
+
+        private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_initialPosition == null) { return; }
+
+            if (!MovedEnoughForDrag((_initialPosition - e.GetPosition(this)).Value)) { return; }
+
+            var senderObj = sender as DependencyObject;
+            if (senderObj == null) { return; }
+
+            DragDrop.DoDragDrop(senderObj, _draggedData, DragDropEffects.Move);
+            CleanUpData();
+        }
+
+        private void ListBox_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            CleanUpData();
         }
     }
 }

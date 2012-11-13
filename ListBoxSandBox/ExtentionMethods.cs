@@ -29,5 +29,11 @@ namespace ListBoxSandBox
             return itemsControl.ContainerFromElement(item) as FrameworkElement;
         }
 
+
+        public static FrameworkElement GetLastContainer(this ItemsControl itemsControl)
+        {
+            return itemsControl.ItemContainerGenerator.ContainerFromIndex
+                       (itemsControl.Items.Count - 1) as FrameworkElement;
+        }
     }
 }
