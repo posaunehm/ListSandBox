@@ -71,8 +71,8 @@ namespace ListBoxSandBox
         private void ListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _initialPosition = e.GetPosition(this);
-            _draggedData = (sender as ItemsControl).GetDraggedData(e.OriginalSource as DependencyObject);
-            _draggedContainer = (sender as ItemsControl).GetDraggedContainer(e.OriginalSource as DependencyObject);
+            _draggedData = (sender as ItemsControl).GetItemData(e.OriginalSource as DependencyObject);
+            _draggedContainer = (sender as ItemsControl).GetItemContainer(e.OriginalSource as DependencyObject);
             _draggedItemIndex = (sender as ItemsControl).GetItemIndex(e.OriginalSource as DependencyObject);
         }
 
@@ -105,16 +105,25 @@ namespace ListBoxSandBox
         private void ListBox_PreviewDragEnter(object sender, DragEventArgs e)
         {
             var itemsControl = sender as ItemsControl;
+            bool showInRight = false;
             if (itemsControl != null)
             {
-                _draggedOveredContainer = itemsControl.GetDraggedContainer(e.OriginalSource as DependencyObject) ??
-                                          itemsControl.ItemContainerGenerator.ContainerFromIndex
+                var temp = itemsControl.GetItemContainer(e.OriginalSource as DependencyObject);
+                if(temp == null)
+                {
+                    _draggedOveredContainer = itemsControl.ItemContainerGenerator.ContainerFromIndex
                                               (itemsControl.Items.Count - 1) as FrameworkElement;
+                    showInRight = true;
+                }
+                else
+                {
+                    _draggedOveredContainer = temp;
+                }
             }
             var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
             if (_draggedContainer != null)
             {
-                _insertionAdorner = new InsertionAdorner(_draggedOveredContainer);
+                _insertionAdorner = new InsertionAdorner(_draggedOveredContainer,showInRight);
                 adornerLayer.Add(_insertionAdorner);
             }
         }
