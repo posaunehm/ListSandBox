@@ -58,6 +58,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ControlHostAdornerBase.cs" />
+    <Compile Include="DragContentAdorner.cs" />
     <Page Include="InsertionCursor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -105,25 +107,25 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Win8.png" />
+    <Resource Include="Image\Win8.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Win7.png" />
+    <Resource Include="Image\Win7.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="WinVista.png" />
+    <Resource Include="Image\WinVista.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="WinXP.png" />
+    <Resource Include="Image\WinXP.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Win98.png" />
+    <Resource Include="Image\Win98.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Win95.png" />
+    <Resource Include="Image\Win95.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="WinNT.png" />
+    <Resource Include="Image\WinNT.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

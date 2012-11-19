@@ -14,6 +14,9 @@ namespace ListBoxSandBox
         private FrameworkElement _draggedOveredContainer;
         private Point? _initialPosition;
         private InsertionAdorner _insertionAdorner;
+        private DragContentAdorner _dragContentAdorner;
+        private AdornerLayer _dragImageAdornerLayer;
+        private FrameworkElement _draggedImageSource;
 
         public MainWindow()
         {
@@ -36,6 +39,9 @@ namespace ListBoxSandBox
 
                 if (adornerLayer != null) { adornerLayer.Remove(_insertionAdorner); }
             }
+
+            if (_dragImageAdornerLayer != null && _dragContentAdorner != null)
+            {_dragImageAdornerLayer.Remove(_dragContentAdorner);}
 
             _insertionAdorner = null;
             _draggedItemIndex = null;
@@ -111,6 +117,7 @@ namespace ListBoxSandBox
         {
             _initialPosition = e.GetPosition(this);
             _draggedData = (sender as ItemsControl).GetItemData(e.OriginalSource as DependencyObject);
+            _draggedImageSource = e.OriginalSource as FrameworkElement;
             _draggedContainer = (sender as ItemsControl).GetItemContainer(e.OriginalSource as DependencyObject);
             _draggedItemIndex = (sender as ItemsControl).GetItemIndex(e.OriginalSource as DependencyObject);
         }
@@ -121,8 +128,15 @@ namespace ListBoxSandBox
 
             if (!MovedEnoughForDrag((_initialPosition - e.GetPosition(this)).Value)) { return; }
 
-            var senderObj = sender as DependencyObject;
+            var senderObj = sender as UIElement;
             if (senderObj == null) { return; }
+
+            _dragContentAdorner = new DragContentAdorner(senderObj, _draggedData, null);
+            _dragImageAdornerLayer = AdornerLayer.GetAdornerLayer(senderObj);
+            if(_dragImageAdornerLayer != null)
+            {
+                _dragImageAdornerLayer.Add(_dragContentAdorner);
+            }
 
             DragDrop.DoDragDrop(senderObj, _draggedData, DragDropEffects.Move);
             CleanUpData();

@@ -9,52 +9,20 @@ using System.Windows.Media;
 
 namespace ListBoxSandBox
 {
-    public class InsertionAdorner : Adorner
+    public class InsertionAdorner : ControlHostAdornerBase
     {
-        private UIElement _adornedElement;
-
-        private readonly Grid _host;
         private readonly InsertionCursor _insertionCursor;
 
         public InsertionAdorner(UIElement adornedElement, bool showInRightSide = false)
             : base(adornedElement)
         {
-            _adornedElement = adornedElement;
-
-            _host = new Grid();
             _insertionCursor = new InsertionCursor();
 
-            _host.Children.Add(_insertionCursor);
+            Host.Children.Add(_insertionCursor);
 
             _insertionCursor.SetValue(HorizontalAlignmentProperty,
                 showInRightSide? HorizontalAlignment.Right : HorizontalAlignment.Left);
             _insertionCursor.SetValue(VerticalAlignmentProperty,VerticalAlignment.Stretch);
-        }
-
-        /// <summary>
-        /// Override of VisualChildrenCount.
-        /// Always return 0
-        /// </summary>
-        protected override int VisualChildrenCount
-        {
-            get { return 1; }
-        }
-
-        //Override of ArrangeOverride.
-        //Set host grid's size.
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            _host.Arrange(new Rect(finalSize));
-            return base.ArrangeOverride(finalSize);
-        }
-
-        protected override Visual GetVisualChild(int index)
-        {
-            if (VisualChildrenCount <= index)
-            {
-                throw new IndexOutOfRangeException();
-            }
-            return _host;
         }
     }
 }
