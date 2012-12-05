@@ -8,16 +8,28 @@ namespace ListBoxSandBox
 {
     public class ControlHostAdornerBase : Adorner
     {
+        private AdornerLayer _adornerLayer;
         protected Grid Host { get; set; }
 
         protected ControlHostAdornerBase(UIElement adornedElement) : base(adornedElement)
         {
+            _adornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
             Host = new Grid();
+
+            if(_adornerLayer != null)
+            {
+                _adornerLayer.Add(this);
+            }
+        }
+
+        public void Detach()
+        {
+            _adornerLayer.Remove(this);
         }
 
         /// <summary>
         /// Override of VisualChildrenCount.
-        /// Always return 0
+        /// Always return 1
         /// </summary>
         protected override int VisualChildrenCount
         {

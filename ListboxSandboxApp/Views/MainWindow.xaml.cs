@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using ListBoxSandBox;
 
@@ -12,11 +11,9 @@ namespace ListboxSandboxApp.Views
     {
         private object _draggedData;
         private int? _draggedItemIndex;
-        private FrameworkElement _draggedOveredContainer;
         private Point? _initialPosition;
         private InsertionAdorner _insertionAdorner;
         private DragContentAdorner _dragContentAdorner;
-        private AdornerLayer _dragImageAdornerLayer;
 
         public MainWindow()
         {
@@ -33,32 +30,26 @@ namespace ListboxSandboxApp.Views
         {
             _initialPosition = null;
             _draggedData = null;
-            if (_draggedOveredContainer != null && _insertionAdorner != null)
-            {
-                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
 
-                if (adornerLayer != null) { adornerLayer.Remove(_insertionAdorner); }
-            }
+            if (_insertionAdorner != null) {_insertionAdorner.Detach();}
 
-            if (_dragImageAdornerLayer != null && _dragContentAdorner != null)
-            { _dragImageAdornerLayer.Remove(_dragContentAdorner); }
+            if (_dragContentAdorner != null) {_dragContentAdorner.Detach();}
 
             _insertionAdorner = null;
             _draggedItemIndex = null;
-            _draggedOveredContainer = null;
         }
 
         private void CreateInsertionAdorner(DependencyObject draggedItem, ItemsControl itemsControl)
         {
-            _draggedOveredContainer = itemsControl.GetItemContainer(draggedItem);
+            var draggedOveredContainer = itemsControl.GetItemContainer(draggedItem);
             bool showInRight = false;
-            if (_draggedOveredContainer == null)
+            if (draggedOveredContainer == null)
             {
-                _draggedOveredContainer = itemsControl.GetLastContainer();
+                draggedOveredContainer = itemsControl.GetLastContainer();
                 showInRight = true;
             }
 
-            _insertionAdorner = new InsertionAdorner(_draggedOveredContainer, showInRight);
+            _insertionAdorner = new InsertionAdorner(draggedOveredContainer, showInRight);
         }
 
         private void DropItemAt(int? droppedItemIndex, ItemsControl itemsControl)
@@ -88,19 +79,14 @@ namespace ListboxSandboxApp.Views
             if (itemsControl == null) { return; }
 
             CreateInsertionAdorner(e.OriginalSource as DependencyObject, itemsControl);
-            AdornerLayer.GetAdornerLayer(_draggedOveredContainer).Add(_insertionAdorner);
         }
 
         private void ListBox_PreviewDragLeave(object sender, DragEventArgs e)
         {
-            if (_draggedOveredContainer != null)
+            if (_insertionAdorner != null)
             {
-                var adornerLayer = AdornerLayer.GetAdornerLayer(_draggedOveredContainer);
-                if (_insertionAdorner != null)
-                {
-                    adornerLayer.Remove(_insertionAdorner);
-                    _insertionAdorner = null;
-                }
+                _insertionAdorner.Detach();
+                _insertionAdorner = null;
             }
         }
 
@@ -136,11 +122,6 @@ namespace ListboxSandboxApp.Views
             if (senderObj == null) { return; }
 
             _dragContentAdorner = new DragContentAdorner(senderObj, _draggedData, (sender as ItemsControl).ItemTemplate);
-            _dragImageAdornerLayer = AdornerLayer.GetAdornerLayer(senderObj);
-            if (_dragImageAdornerLayer != null)
-            {
-                _dragImageAdornerLayer.Add(_dragContentAdorner);
-            }
 
             DragDrop.DoDragDrop(senderObj, _draggedData, DragDropEffects.Move);
             CleanUpData();
