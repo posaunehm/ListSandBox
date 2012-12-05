@@ -16,15 +16,20 @@ namespace ListBoxSandBox
             _adornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
             Host = new Grid();
 
-            if(_adornerLayer != null)
+            if(AdornerLayer != null)
             {
-                _adornerLayer.Add(this);
+                AdornerLayer.Add(this);
             }
         }
 
         public void Detach()
         {
-            _adornerLayer.Remove(this);
+            AdornerLayer.Remove(this);
+        }
+
+        protected AdornerLayer AdornerLayer
+        {
+            get { return _adornerLayer; }
         }
 
         /// <summary>
@@ -35,6 +40,8 @@ namespace ListBoxSandBox
         {
             get { return 1; }
         }
+
+
 
         protected override Size MeasureOverride(Size constraint)
         {
