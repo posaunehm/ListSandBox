@@ -32,23 +32,6 @@ namespace ListboxSandboxApp.Views
 
         public static int? GetItemIndex(this ItemsControl itemsControl, object item)
         {
-            //if (itemsControl.Items.Contains(item))
-            //{
-            //    return itemsControl.Items.IndexOf(item);
-            //}
-            //try
-            //{
-            //    return ((dynamic)itemsControl.ItemsSource).IndexOf((dynamic)item.DataContext);
-            //}
-            //catch (MissingMethodException)
-            //{
-            //    return null;
-            //}
-            //catch (RuntimeBinderException)
-            //{
-            //    return null;
-            //}
-
             return itemsControl.Operate(
                 item,
                 (o, list) => list.Contains(o) ? new int?(list.IndexOf(o)) : null);
@@ -58,6 +41,12 @@ namespace ListboxSandboxApp.Views
         {
             return itemsControl.ItemContainerGenerator.ContainerFromIndex
                        (itemsControl.Items.Count - 1) as FrameworkElement;
+        }
+
+        public static Point PointToItemContainer(this ItemsControl itemsControl, DependencyObject item, Point screenPos)
+        {
+            var itemContainer = itemsControl.GetItemContainer(item);
+            return itemContainer == null ? new Point() : itemContainer.PointFromScreen(screenPos);
         }
 
         public static void InsertItemAt(this ItemsControl itemsControl, int droppedItemIndex, object dataToBeInserted)

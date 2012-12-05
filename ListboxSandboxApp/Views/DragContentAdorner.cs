@@ -10,8 +10,9 @@ namespace ListboxSandboxApp.Views
     {
         private readonly ContentPresenter _contentPresenter;
         private TranslateTransform _translate;
+        private Point _offset;
 
-        public DragContentAdorner(UIElement adornedElement, Object draggedData, DataTemplate dataTemplate)
+        public DragContentAdorner(UIElement adornedElement, object draggedData, DataTemplate dataTemplate, Point offset)
             : base(adornedElement)
         {
             _contentPresenter = new ContentPresenter
@@ -24,17 +25,19 @@ namespace ListboxSandboxApp.Views
             _translate = new TranslateTransform {X = 0, Y = 0};
             _contentPresenter.RenderTransform = _translate;
 
+            _offset = offset;
+
             Host.Children.Add(_contentPresenter);
 
            _contentPresenter.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Left);
            _contentPresenter.SetValue(VerticalAlignmentProperty, VerticalAlignment.Top);
         }
 
-        public void SetScreenPosition(Point screenPosition, Point offset)
+        public void SetScreenPosition(Point screenPosition)
         {
             var positionInControl = base.AdornedElement.PointFromScreen(screenPosition);
-            _translate.X = positionInControl.X - offset.X;
-            _translate.Y = positionInControl.Y - offset.Y;
+            _translate.X = positionInControl.X - _offset.X;
+            _translate.Y = positionInControl.Y - _offset.Y;
             base.AdornerLayer.Update();
 
         }

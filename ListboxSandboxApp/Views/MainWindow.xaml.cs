@@ -14,7 +14,6 @@ namespace ListboxSandboxApp.Views
         private Point? _initialPosition;
         private InsertionAdorner _insertionAdorner;
         private DragContentAdorner _dragContentAdorner;
-        private Point _mouseGripOffset;
 
         public MainWindow()
         {
@@ -88,7 +87,7 @@ namespace ListboxSandboxApp.Views
         private void ListBox_PreviewDragOver(object sender, DragEventArgs e)
         {
             var currentPos = this.PointToScreen(e.GetPosition(this));
-            _dragContentAdorner.SetScreenPosition(currentPos, _mouseGripOffset);
+            _dragContentAdorner.SetScreenPosition(currentPos);
         }
 
         private void ListBox_PreviewDrop(object sender, DragEventArgs e)
@@ -105,19 +104,11 @@ namespace ListboxSandboxApp.Views
             var itemsControl = sender as ItemsControl;
             if (itemsControl == null){ return;}
             _initialPosition = this.PointToScreen(e.GetPosition(this));
-            _mouseGripOffset = CalculateMouseGripOffset(e.OriginalSource as DependencyObject, itemsControl);
             _draggedData = itemsControl.GetItemData(e.OriginalSource as DependencyObject);
             _draggedItemIndex = itemsControl.GetItemIndex(_draggedData);
         }
 
-        private Point CalculateMouseGripOffset(DependencyObject dependencyObject, ItemsControl itemsControl)
-        {
-            var draggedOveredContainer = itemsControl.GetItemContainer(dependencyObject);
-            if (draggedOveredContainer == null)
-            { return new Point(); }
-            var pointFromScreen = draggedOveredContainer.PointFromScreen(_initialPosition.Value);
-            return pointFromScreen;
-        }
+
 
         private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
         {
@@ -130,8 +121,10 @@ namespace ListboxSandboxApp.Views
             if (itemsControl == null) { return; }
 
             _dragContentAdorner = new DragContentAdorner(
-                itemsControl, _draggedData, itemsControl.ItemTemplate);
-            _dragContentAdorner.SetScreenPosition(currentPos, _mouseGripOffset);
+                itemsControl, _draggedData, itemsControl.ItemTemplate,
+                itemsControl.PointToItemContainer(e.OriginalSource as DependencyObject, _initialPosition.Value));
+
+            _dragContentAdorner.SetScreenPosition(currentPos);
 
             if (_draggedData != null)
             {
