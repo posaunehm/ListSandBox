@@ -17,7 +17,7 @@
         <DataTemplate x:Key="ListBoxItemTemplate">
             <Grid d:DesignWidth="196.677" d:DesignHeight="183.259" Width="100" Height="120">
                 <Image Source="{Binding ImageSource, Mode=OneWay}"/>
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="{Binding Descriptio}" />
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="{Binding Description}" />
             </Grid>
         </DataTemplate>
     </Window.Resources>
