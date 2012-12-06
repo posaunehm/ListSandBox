@@ -43,7 +43,7 @@ namespace ListboxSandboxApp.Views
                        (itemsControl.Items.Count - 1) as FrameworkElement;
         }
 
-        public static Point PointToItemContainer(this ItemsControl itemsControl, DependencyObject item, Point screenPos)
+        public static Point PointToItem(this ItemsControl itemsControl, DependencyObject item, Point screenPos)
         {
             var itemContainer = itemsControl.GetItemContainer(item);
             return itemContainer == null ? new Point() : itemContainer.PointFromScreen(screenPos);

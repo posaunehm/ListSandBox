@@ -14,6 +14,7 @@ namespace ListboxSandboxApp.Views
         private Point? _initialPosition;
         private InsertionAdorner _insertionAdorner;
         private DragContentAdorner _dragContentAdorner;
+        private Point _mouseOffsetFromItem;
 
         public MainWindow()
         {
@@ -79,9 +80,14 @@ namespace ListboxSandboxApp.Views
         {
             if (_insertionAdorner != null)
             {
-                _insertionAdorner.Detach();
-                _insertionAdorner = null;
+                CreanUpInsertionAdorner();
             }
+        }
+
+        private void CreanUpInsertionAdorner()
+        {
+            _insertionAdorner.Detach();
+            _insertionAdorner = null;
         }
 
         private void ListBox_PreviewDragOver(object sender, DragEventArgs e)
@@ -102,9 +108,15 @@ namespace ListboxSandboxApp.Views
         private void ListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var itemsControl = sender as ItemsControl;
-            if (itemsControl == null){ return;}
+            var draggedItem = e.OriginalSource as FrameworkElement;
+
+            if (itemsControl == null || draggedItem == null){ return;}
+
+            _draggedData = itemsControl.GetItemData(draggedItem);
+            if(_draggedData == null){return;}
+            
             _initialPosition = this.PointToScreen(e.GetPosition(this));
-            _draggedData = itemsControl.GetItemData(e.OriginalSource as DependencyObject);
+            _mouseOffsetFromItem = itemsControl.PointToItem( draggedItem, _initialPosition.Value);
             _draggedItemIndex = itemsControl.GetItemIndex(_draggedData);
         }
 
@@ -112,24 +124,24 @@ namespace ListboxSandboxApp.Views
 
         private void ListBox_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (_initialPosition == null) { return; }
-
-            var currentPos = this.PointToScreen( e.GetPosition(this));
-            if (!MovedEnoughForDrag((_initialPosition - currentPos).Value)) { return; }
-
             var itemsControl = sender as ItemsControl;
-            if (itemsControl == null) { return; }
+
+            if (_draggedData == null || _initialPosition == null || itemsControl== null)
+            {
+                return;
+            }
+
+            var currentPos = this.PointToScreen(e.GetPosition(this));
+            if (!MovedEnoughForDrag((_initialPosition - currentPos).Value))
+            {
+                return;
+            }
 
             _dragContentAdorner = new DragContentAdorner(
-                itemsControl, _draggedData, itemsControl.ItemTemplate,
-                itemsControl.PointToItemContainer(e.OriginalSource as DependencyObject, _initialPosition.Value));
-
+                itemsControl, _draggedData, itemsControl.ItemTemplate, _mouseOffsetFromItem);
             _dragContentAdorner.SetScreenPosition(currentPos);
 
-            if (_draggedData != null)
-            {
-                DragDrop.DoDragDrop(itemsControl, _draggedData, DragDropEffects.Move);
-            }
+            DragDrop.DoDragDrop(itemsControl, _draggedData, DragDropEffects.Move);
             CleanUpData();
         }
 
