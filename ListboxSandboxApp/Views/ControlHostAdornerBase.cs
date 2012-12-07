@@ -6,17 +6,18 @@ using System.Windows.Media;
 
 namespace ListBoxSandBox
 {
-    public class ControlHostAdornerBase : Adorner
+    public class ControlHostAdornerBase : Adorner, IDisposable
     {
         private AdornerLayer _adornerLayer;
         protected Grid Host { get; set; }
 
-        protected ControlHostAdornerBase(UIElement adornedElement) : base(adornedElement)
+        protected ControlHostAdornerBase(UIElement adornedElement)
+            : base(adornedElement)
         {
             _adornerLayer = AdornerLayer.GetAdornerLayer(adornedElement);
             Host = new Grid();
 
-            if(AdornerLayer != null)
+            if (AdornerLayer != null)
             {
                 AdornerLayer.Add(this);
             }
@@ -63,5 +64,36 @@ namespace ListBoxSandBox
             }
             return Host;
         }
+
+        #region Dispose Pattern
+
+        private bool _disposed;
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            this.Dispose(true);
+        }
+
+        ~ControlHostAdornerBase()
+        {
+            this.Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+            _disposed = true;
+            if (disposing)
+            {
+                Detach();
+            }
+        }
+
+        #endregion
+
     }
 }
