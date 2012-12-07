@@ -17,7 +17,9 @@
         <DataTemplate x:Key="ListBoxItemTemplate">
             <Grid d:DesignWidth="196.677" d:DesignHeight="183.259" Width="100" Height="120">
                 <Image Source="{Binding ImageSource, Mode=OneWay}"/>
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="{Binding Description}" />
+                <TextBlock HorizontalAlignment="Center" 
+                           VerticalAlignment="Bottom"
+                           Text="{Binding Description}" />
             </Grid>
         </DataTemplate>
     </Window.Resources>
@@ -43,13 +45,18 @@
     </i:Interaction.Triggers>
 
     <Grid>
-        <ListBox Margin="0,0,0,18" ItemsPanel="{DynamicResource ItemsWrapPanelTemplate}"
-    		ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown"
-    		PreviewMouseMove="ListBox_PreviewMouseMove" PreviewMouseUp="ListBox_PreviewMouseUp" PreviewDrop="ListBox_PreviewDrop"
-    		AllowDrop="True" PreviewDragEnter="ListBox_PreviewDragEnter" PreviewDragLeave="ListBox_PreviewDragLeave"
-    		PreviewDragOver="ListBox_PreviewDragOver" ItemsSource="{Binding ListBoxItemSamples}" ItemTemplate="{DynamicResource ListBoxItemTemplate}"
-                 />
-        <Slider x:Name="slider" Margin="0" VerticalAlignment="Bottom" Minimum="50" Maximum="300" Interval="10" />
-
+        <ListBox Margin="0,0,0,18" 
+                 ItemsPanel="{DynamicResource ItemsWrapPanelTemplate}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                 PreviewMouseLeftButtonDown="ListBox_PreviewMouseLeftButtonDown"
+                 PreviewMouseMove="ListBox_PreviewMouseMove" 
+                 PreviewMouseUp="ListBox_PreviewMouseUp" 
+                 PreviewDrop="ListBox_PreviewDrop"
+                 AllowDrop="True" 
+                 PreviewDragEnter="ListBox_PreviewDragEnter" 
+                 PreviewDragLeave="ListBox_PreviewDragLeave"
+                 PreviewDragOver="ListBox_PreviewDragOver" 
+                 ItemsSource="{Binding ListBoxItemSamples}"
+                 ItemTemplate="{DynamicResource ListBoxItemTemplate}" />
     </Grid>
 </Window>
