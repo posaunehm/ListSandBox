@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace ListBoxSandBox
+namespace ListboxSandboxApp.Views
 {
     public class ControlHostAdornerBase : Adorner, IDisposable
     {
